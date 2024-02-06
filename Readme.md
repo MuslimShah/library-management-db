@@ -1,5 +1,6 @@
 ## Library Management System Database Overview
-![alt text](https://github.com/[username]/[reponame]/blob/[branch]/libraryManagementDb.png?raw=true)
+![Library Management System](https://github.com/MuslimShah/libraryDb/blob/main/libraryManagementDb.png)
+
 
 
 The provided database is designed to efficiently manage various aspects of library operations. Here's how it works:

@@ -1,0 +1,216 @@
+CREATE TABLE author(
+  author_id INT NOT NULL,
+  author_name VARCHAR NOT NULL,
+  nationality VARCHAR NOT NULL,
+  gender VARCHAR NOT NULL,
+  date_of_birth DATE NOT NULL,
+  date_of_death DATE,
+  `subject` VARCHAR NOT NULL,
+  awards VARCHAR,
+  biography VARCHAR,
+  wiki_pedia_link VARCHAR,
+  extra_note VARCHAR,
+  PRIMARY KEY(author_id)
+) COMMENT 'information about authors';
+
+CREATE TABLE publisher(
+  publisher_id INT NOT NULL,
+  publisher_name VARCHAR NOT NULL,
+  head_quarters VARCHAR NOT NULL,
+  website VARCHAR NOT NULL,
+  year_founded DATE NOT NULL,
+  specialization VARCHAR NOT NULL,
+  extra_notes VARCHAR,
+  PRIMARY KEY(publisher_id)
+) COMMENT 'information about publishers';
+
+CREATE TABLE book(
+  book_id INT NOT NULL,
+  title VARCHAR NOT NULL,
+  `subject` VARCHAR NOT NULL,
+  no_of_copies INT NOT NULL,
+  publication_date DATE NOT NULL,
+  PRIMARY KEY(book_id)
+) COMMENT 'information about books';
+
+CREATE TABLE copy(
+  copy_id INT NOT NULL,
+  `condition` VARCHAR NOT NULL,
+  shelf_nimber VARCHAR NOT NULL,
+  is_available BOOLEAN NOT NULL,
+  `status` VARCHAR NOT NULL,
+  notes VARCHAR,
+  edition INT NOT NULL,
+  `row_number` INT NOT NULL,
+  book_id INT NOT NULL,
+  PRIMARY KEY(copy_id)
+) COMMENT 'informaton about book copies';
+
+CREATE TABLE `member`(
+  member_id INT NOT NULL,
+  first_name VARCHAR NOT NULL,
+  last_name VARCHAR NOT NULL,
+  date_of_birth DATE NOT NULL,
+  PRIMARY KEY(member_id)
+) COMMENT 'information about member';
+
+CREATE TABLE mem_address(
+  address_id INT NOT NULL,
+  street VARCHAR NOT NULL,
+  state VARCHAR NOT NULL,
+  postal_code VARCHAR NOT NULL,
+  country VARCHAR NOT NULL,
+  address_type VARCHAR NOT NULL,
+  member_id INT NOT NULL,
+  PRIMARY KEY(address_id)
+) COMMENT 'addresses of members';
+
+CREATE TABLE mem_contact(
+  contact_id INT NOT NULL,
+  contact_type VARCHAR NOT NULL,
+  contact_info INT,
+  member_id INT NOT NULL,
+  PRIMARY KEY(contact_id)
+) COMMENT 'contact info about members';
+
+CREATE TABLE membership(
+  membership_id INT NOT NULL,
+  membership_type VARCHAR NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  `status` VARCHAR NOT NULL,
+  payment_method VARCHAR NOT NULL,
+  amount_paid INT NOT NULL,
+  member_id INT NOT NULL,
+  PRIMARY KEY(membership_id)
+) COMMENT 'information about member membership
+like current status etc';
+
+CREATE TABLE book_author(book_id INT NOT NULL, author_id INT NOT NULL) COMMENT
+  'author of the book';
+
+CREATE TABLE book_publisher(publisher_id INT NOT NULL, book_id INT NOT NULL);
+
+CREATE TABLE checkout(
+  checkout_id INT NOT NULL,
+  member_id INT NOT NULL,
+  checkout_date DATE NOT NULL,
+  due_date DATE NOT NULL,
+  return_date DATE,
+  renewal_date DATE,
+  renewal_count DATE,
+  is_returned BOOLEAN,
+  emp_id INT NOT NULL,
+  copy_id INT NOT NULL,
+  PRIMARY KEY(checkout_id)
+);
+
+CREATE TABLE fine(
+  fine_id INT NOT NULL,
+  checkout_id INT NOT NULL,
+  fine_amount INT,
+  fine_reason VARCHAR,
+  fine_date DATE,
+  fine_status VARCHAR,
+  PRIMARY KEY(fine_id)
+) COMMENT 'info about fine';
+
+CREATE TABLE employee(
+  emp_id INT NOT NULL,
+  first_name VARCHAR NOT NULL,
+  last_name VARCHAR NOT NULL,
+  `position` VARCHAR NOT NULL,
+  `role` VARCHAR NOT NULL,
+  hire_date DATE NOT NULL,
+  PRIMARY KEY(emp_id)
+) COMMENT 'employee info
+';
+
+CREATE TABLE emp_address(
+  address_id INT NOT NULL,
+  address_type VARCHAR NOT NULL,
+  street VARCHAR NOT NULL,
+  state VARCHAR NOT NULL,
+  postal_code VARCHAR NOT NULL,
+  country VARCHAR NOT NULL,
+  emp_id INT NOT NULL,
+  PRIMARY KEY(address_id)
+);
+
+CREATE TABLE emp_contact(
+  contact_id INT NOT NULL,
+  contact_type VARCHAR NOT NULL,
+  contact_info INT,
+  emp_id INT NOT NULL,
+  PRIMARY KEY(contact_id)
+) COMMENT 'contact info about members';
+
+CREATE TABLE waiting(
+  wait_id INT NOT NULL,
+  book_id INT NOT NULL,
+  member_id INT NOT NULL,
+  req_date DATE,
+  is_approved BOOLEAN,
+  PRIMARY KEY(wait_id)
+) COMMENT 'waiting members who have requested for a book';
+
+ALTER TABLE mem_address
+  ADD CONSTRAINT member_mem_address
+    FOREIGN KEY (member_id) REFERENCES `member` (member_id);
+
+ALTER TABLE mem_contact
+  ADD CONSTRAINT member_mem_contact
+    FOREIGN KEY (member_id) REFERENCES `member` (member_id);
+
+ALTER TABLE membership
+  ADD CONSTRAINT member_membership
+    FOREIGN KEY (member_id) REFERENCES `member` (member_id);
+
+ALTER TABLE book_author
+  ADD CONSTRAINT book_book_author FOREIGN KEY (book_id) REFERENCES book (book_id)
+  ;
+
+ALTER TABLE book_author
+  ADD CONSTRAINT author_book_author
+    FOREIGN KEY (author_id) REFERENCES author (author_id);
+
+ALTER TABLE book_publisher
+  ADD CONSTRAINT publisher_book_publisher
+    FOREIGN KEY (publisher_id) REFERENCES publisher (publisher_id);
+
+ALTER TABLE book_publisher
+  ADD CONSTRAINT book_book_publisher
+    FOREIGN KEY (book_id) REFERENCES book (book_id);
+
+ALTER TABLE copy
+  ADD CONSTRAINT book_copy FOREIGN KEY (book_id) REFERENCES book (book_id);
+
+ALTER TABLE checkout
+  ADD CONSTRAINT member_checkout
+    FOREIGN KEY (member_id) REFERENCES `member` (member_id);
+
+ALTER TABLE fine
+  ADD CONSTRAINT checkout_fine
+    FOREIGN KEY (checkout_id) REFERENCES checkout (checkout_id);
+
+ALTER TABLE emp_address
+  ADD CONSTRAINT librarian_librarian_address
+    FOREIGN KEY (emp_id) REFERENCES employee (emp_id);
+
+ALTER TABLE emp_contact
+  ADD CONSTRAINT librarian_librarian_contact
+    FOREIGN KEY (emp_id) REFERENCES employee (emp_id);
+
+ALTER TABLE checkout
+  ADD CONSTRAINT librarian_checkout
+    FOREIGN KEY (emp_id) REFERENCES employee (emp_id);
+
+ALTER TABLE checkout
+  ADD CONSTRAINT copy_checkout FOREIGN KEY (copy_id) REFERENCES copy (copy_id);
+
+ALTER TABLE waiting
+  ADD CONSTRAINT book_waiting FOREIGN KEY (book_id) REFERENCES book (book_id);
+
+ALTER TABLE waiting
+  ADD CONSTRAINT member_waiting
+    FOREIGN KEY (member_id) REFERENCES `member` (member_id);
